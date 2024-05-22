@@ -1,0 +1,227 @@
+#include <stdio.h>
+
+#include <stdlib.h>
+
+
+
+struct Node {
+
+  int data;
+
+  struct Node* next;
+
+};
+
+
+
+struct Node* createNode(int data) {
+
+  struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+
+  if (newNode == NULL) {
+
+    printf("Memory allocation failed\n");
+
+    exit(1);
+
+  }
+
+  newNode->data = data;
+
+  newNode->next = NULL;
+
+  return newNode;
+
+}
+
+
+
+void insertAtBeginning(struct Node** head, int data) {
+
+  struct Node* newNode = createNode(data);
+
+  if (*head == NULL) {
+
+    newNode->next = newNode;
+
+    *head = newNode;
+
+  } else {
+
+    newNode->next = (*head)->next;
+
+    (*head)->next = newNode;
+
+  }
+
+}
+
+
+
+void deleteNode(struct Node** head, int key) {
+
+  if (*head == NULL) {
+
+    printf("List is empty\n");
+
+    return;
+
+  }
+
+
+
+  struct Node *prev = NULL, *current = *head;
+
+
+
+  if (current->data == key) {
+
+    struct Node* temp = *head;
+
+    while (temp->next != *head)
+
+      temp = temp->next;
+
+    temp->next = (*head)->next;
+
+    *head = (*head)->next;
+
+    free(current);
+
+    return;
+
+  }
+
+
+
+  do {
+
+    prev = current;
+
+    current = current->next;
+
+  } while (current != *head && current->data != key);
+
+
+
+  if (current == *head) {
+
+    printf("Key not found in the list\n");
+
+    return;
+
+  }
+
+
+
+  prev->next = current->next;
+
+  free(current);
+
+}
+
+
+
+struct Node* search(struct Node* head, int key) {
+
+  struct Node* current = head;
+
+  if (current == NULL) {
+
+    printf("List is empty\n");
+
+    return NULL;
+
+  }
+
+
+
+  do {
+
+    if (current->data == key)
+
+      return current;
+
+    current = current->next;
+
+  } while (current != head);
+
+
+
+  printf("Key not found in the list\n");
+
+  return NULL;
+
+}
+
+
+
+void display(struct Node* head) {
+
+  if (head == NULL) {
+
+    printf("List is empty\n");
+
+    return;
+
+  }
+
+
+
+  struct Node* current = head;
+
+  do {
+
+    printf("%d -> ", current->data);
+
+    current = current->next;
+
+  } while (current != head);
+
+  printf("\n");
+
+}
+
+
+
+int main() {
+
+  struct Node* head = NULL;
+
+
+
+  insertAtBeginning(&head, 10);
+
+  insertAtBeginning(&head, 20);
+
+  insertAtBeginning(&head, 30);
+
+
+
+  printf("Circular Linked List: ");
+
+  display(head);
+
+
+
+  deleteNode(&head, 20);
+
+  printf("Circular Linked List after deletion: ");
+
+  display(head);
+
+
+
+  int key = 30;
+
+  struct Node* foundNode = search(head, key);
+
+  if (foundNode != NULL)
+
+    printf("Key %d found at address %p\n", key, (void*)foundNode);
+
+
+
+  return 0;
+
+}
