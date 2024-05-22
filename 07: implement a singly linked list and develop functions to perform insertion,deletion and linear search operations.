@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node* createNode(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed!\n");
+        exit(1);
+    }
+    newNode->data = value;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertAtBeginning(struct Node** headRef, int value) {
+    struct Node* newNode = createNode(value);
+    newNode->next = *headRef;
+    *headRef = newNode;
+}
+
+void insertAtEnd(struct Node** headRef, int value) {
+    struct Node* newNode = createNode(value);
+    if (*headRef == NULL) {
+        *headRef = newNode;
+        return;
+    }
+    struct Node* current = *headRef;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = newNode;
+}
+
+void deleteNode(struct Node** headRef, int value) {
+    struct Node* temp = *headRef;
+    struct Node* prev = NULL;
+
+    if (temp != NULL && temp->data == value) {
+        *headRef = temp->next;
+        free(temp);
+        return;
+    }
+
+    while (temp != NULL && temp->data != value) {
+        prev = temp;
+        temp = temp->next;
+    }
+
+    if (temp == NULL) return;
+
+    prev->next = temp->next;
+    free(temp);
+}
+
+int search(struct Node* head, int value) {
+    struct Node* current = head;
+    int position = 0;
+
+    while (current != NULL) {
+        if (current->data == value) {
+            return position;
+        }
+        current = current->next;
+        position++;
+    }
+
+    return -1;
+}
+
+void display(struct Node* head) {
+    struct Node* current = head;
+    while (current != NULL) {
+        printf("%d -> ", current->data);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    struct Node* head = NULL;
+
+    insertAtBeginning(&head, 10);
+    insertAtBeginning(&head, 20);
+    insertAtEnd(&head, 30);
+
+    printf("List: ");
+    display(head);
+
+    deleteNode(&head, 20);
+
+    printf("List after deletion: ");
+    display(head);
+
+    int searchElement = 30;
+    int position = search(head, searchElement);
+    if (position != -1) {
+        printf("%d found at position %d in the list.\n", searchElement, position);
+    } else {
+        printf("%d not found in the list.\n", searchElement);
+    }
+
+    return 0;
+}
